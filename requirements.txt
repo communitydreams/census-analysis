@@ -1,0 +1,5 @@
+dotenv
+aiohttp
+pandas
+seaborn
+matplotlib

@@ -4,6 +4,111 @@ import matplotlib.pyplot as plt
 
 sns.set_theme(style="darkgrid", rc={"figure.figsize": (8, 6), "axes.titlesize": 15})
 
+age_group_mapping = {
+    'Under 5 Years': ['Male Population Under 5 Years', 'Female Population Under 5 Years'],
+    '5 to 9 Years': ['Male Population 5 to 9 Years', 'Female Population 5 to 9 Years'],
+    '10 to 14 Years': ['Male Population 10 to 14 Years', 'Female Population 10 to 14 Years'],
+    '15 to 19 Years': ['Male Population 15 to 17 Years', 'Male Population 18 and 19 Years',
+                       'Female Population 15 to 17 Years', 'Female Population 18 and 19 Years'],
+    '20 to 24 Years': ['Male Population 20 Years', 'Male Population 21 Years', 'Male Population 22 to 24 Years',
+                       'Female Population 20 Years', 'Female Population 21 Years', 'Female Population 22 to 24 Years'],
+    '25 to 34 Years': ['Male Population 25 to 29 Years', 'Male Population 30 to 34 Years',
+                       'Female Population 25 to 29 Years', 'Female Population 30 to 34 Years'],
+    '35 to 44 Years': ['Male Population 35 to 39 Years', 'Male Population 40 to 44 Years',
+                       'Female Population 35 to 39 Years', 'Female Population 40 to 44 Years'],
+    '45 to 54 Years': ['Male Population 45 to 49 Years', 'Male Population 50 to 54 Years',
+                       'Female Population 45 to 49 Years', 'Female Population 50 to 54 Years'],
+    '55 to 59 Years': ['Male Population 55 to 59 Years', 'Female Population 55 to 59 Years'],
+    '60 to 64 Years': ['Male Population 60 and 61 Years', 'Male Population 62 to 64 Years',
+                       'Female Population 60 and 61 Years', 'Female Population 62 to 64 Years'],
+    '65 to 74 Years': ['Male Population 65 and 66 Years', 'Male Population 67 to 69 Years', 'Male Population 70 to 74 Years',
+                       'Female Population 65 and 66 Years', 'Female Population 67 to 69 Years', 'Female Population 70 to 74 Years'],
+    '75 to 84 Years': ['Male Population 75 to 79 Years', 'Male Population 80 to 84 Years',
+                       'Female Population 75 to 79 Years', 'Female Population 80 to 84 Years'],
+    '85 Years and Over': ['Male Population 85 Years and Over', 'Female Population 85 Years and Over']
+}
+age_group_df = pd.DataFrame()
+
+# Sum the columns for each age group
+for group_name, columns in age_group_mapping.items():
+    age_group_df[group_name] = df[columns].sum(axis=1)
+    
+age_group_df = age_group_df.apply(pd.to_numeric, errors='coerce')
+age_group_df.insert(0, 'ZIP Code', zipcode)
+age_group_df
+
+
+
+# Define the education groupings
+education_grouping = {
+    'Less Than 9th Grade': [
+        'No Schooling Completed', 'Nursery School', 'Kindergarten', '1st Grade', 
+        '2nd Grade', '3rd Grade', '4th Grade'
+    ],
+    '9th to 12th Grade No Diploma': [
+        '5th Grade', '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', 
+        '11th Grade', '12th Grade No Diploma'
+    ],
+    'High School Graduate and Equivalent': [
+        'Regular High School Diploma', 'GED or Alternative Credential'
+    ],
+    'Some College No Degree': [
+        'Some College, Less Than 1 Year', 'Some College, 1 or More Years, No Degree'
+    ],
+    'Associates Degree': [
+        'Associate’s Degree'
+    ],
+    'Bachelors Degree': [
+        'Bachelor’s Degree'
+    ],
+    'Graduate or Professional Degree': [
+        'Master’s Degree', 'Professional School Degree', 'Doctorate Degree'
+    ]
+}
+edu_group_df = pd.DataFrame()
+
+# Sum the columns for each education group
+for group_name, columns in education_grouping.items():
+    edu_group_df[group_name] = df[columns].sum(axis=1)
+
+edu_group_df = edu_group_df.apply(pd.to_numeric, errors='coerce')
+edu_group_df.insert(0, 'ZIP Code', zipcode)
+edu_group_df
+
+
+
+race_columns = [
+    'Population White Alone',
+    'Population Black or African American Alone',
+    'Population American Indian and Alaska Native Alone',
+    'Population Asian Alone',
+    'Population Native Hawaiian and Other Pacific Islander Alone',
+    'Population Some Other Race Alone',
+    'Population Two or More Races',
+#     'Population Hispanic or Latino'
+]
+occupation_columns = [
+#     'Total Occupations', 
+    'Management, Business, Science, and Arts Occupations', 
+    'Service Occupations', 
+    'Sales and Office Occupations', 
+    'Natural Resources, Construction, and Maintenance Occupations', 
+    'Production, Transportation, and Material Moving Occupations'
+]
+heating_fuel_columns = [    
+#      'Housing Units that use Heating Fuel',
+     'Housing Units with Utility Gas',
+     'Housing Units with Bottle/Tank/LP Gas',
+     'Housing Units with Electricity',
+     'Housing Units with Fuel/Oil/Kerosene',
+     'Housing Units with Coal',
+     'Housing Units with Wood',
+     'Housing Units with Solar Energy',
+     'Housing Units with Other Fuel',
+     'Housing Units with No Fuel Used',
+]
+
+
 
 for zip_code in df['ZIP Code'].unique():
     print(f"\033[1m-----------------Analysis for ZIP Code: {zip_code}-------------------\033[0m \n")
