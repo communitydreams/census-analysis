@@ -14,7 +14,7 @@ logging.basicConfig(
     level=logging.DEBUG, 
     format='%(asctime)s:%(levelname)s:%(name)s:%(filename)s:line %(lineno)d: %(message)s'
 )
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 # For local ssl certification issue
 import ssl
@@ -80,11 +80,15 @@ async def run(zip_code):
         await asyncio.gather(*tasks)
         return results
 
-if __name__ == '__main__':
+def get_data(zip_code):
     try:
-        results = asyncio.run(run(ZIPCODE))
-        df = generate_dataframe(ZIPCODE, results)
+        results = asyncio.run(run(zip_code))
+        df = generate_dataframe(zip_code, results)
         logger.info("Data extraction and DataFrame creation completed successfully.")
-        print(df)
+        return df
     except Exception as e:
         logger.exception("Failed to complete the data extraction and DataFrame creation process.")
+        raise
+
+if __name__ == '__main__':
+    print(get_data(ZIPCODE))
