@@ -4,116 +4,107 @@ import matplotlib.pyplot as plt
 
 from extract import get_data
 
+
 sns.set_theme(style="darkgrid", rc={"figure.figsize": (8, 6), "axes.titlesize": 15})
 
-def prepare_data(df):
+AGE_COLUMNS = {
+    'Under 5 Years': ['Male Population Under 5 Years', 'Female Population Under 5 Years'],
+    '5 to 9 Years': ['Male Population 5 to 9 Years', 'Female Population 5 to 9 Years'],
+    '10 to 14 Years': ['Male Population 10 to 14 Years', 'Female Population 10 to 14 Years'],
+    '15 to 19 Years': ['Male Population 15 to 17 Years', 'Male Population 18 and 19 Years',
+                    'Female Population 15 to 17 Years', 'Female Population 18 and 19 Years'],
+    '20 to 24 Years': ['Male Population 20 Years', 'Male Population 21 Years', 'Male Population 22 to 24 Years',
+                    'Female Population 20 Years', 'Female Population 21 Years', 'Female Population 22 to 24 Years'],
+    '25 to 34 Years': ['Male Population 25 to 29 Years', 'Male Population 30 to 34 Years',
+                    'Female Population 25 to 29 Years', 'Female Population 30 to 34 Years'],
+    '35 to 44 Years': ['Male Population 35 to 39 Years', 'Male Population 40 to 44 Years',
+                    'Female Population 35 to 39 Years', 'Female Population 40 to 44 Years'],
+    '45 to 54 Years': ['Male Population 45 to 49 Years', 'Male Population 50 to 54 Years',
+                    'Female Population 45 to 49 Years', 'Female Population 50 to 54 Years'],
+    '55 to 59 Years': ['Male Population 55 to 59 Years', 'Female Population 55 to 59 Years'],
+    '60 to 64 Years': ['Male Population 60 and 61 Years', 'Male Population 62 to 64 Years',
+                    'Female Population 60 and 61 Years', 'Female Population 62 to 64 Years'],
+    '65 to 74 Years': ['Male Population 65 and 66 Years', 'Male Population 67 to 69 Years', 'Male Population 70 to 74 Years',
+                    'Female Population 65 and 66 Years', 'Female Population 67 to 69 Years', 'Female Population 70 to 74 Years'],
+    '75 to 84 Years': ['Male Population 75 to 79 Years', 'Male Population 80 to 84 Years',
+                    'Female Population 75 to 79 Years', 'Female Population 80 to 84 Years'],
+    '85 Years and Over': ['Male Population 85 Years and Over', 'Female Population 85 Years and Over']
+}
+EDUCATION_COLUMNS = {
+    'Less Than 9th Grade': [
+        'No Schooling Completed', 'Nursery School', 'Kindergarten', '1st Grade', 
+        '2nd Grade', '3rd Grade', '4th Grade'
+    ],
+    '9th to 12th Grade No Diploma': [
+        '5th Grade', '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', 
+        '11th Grade', '12th Grade No Diploma'
+    ],
+    'High School Graduate and Equivalent': [
+        'Regular High School Diploma', 'GED or Alternative Credential'
+    ],
+    'Some College No Degree': [
+        'Some College, Less Than 1 Year', 'Some College, 1 or More Years, No Degree'
+    ],
+    'Associates Degree': [
+        'Associate’s Degree'
+    ],
+    'Bachelors Degree': [
+        'Bachelor’s Degree'
+    ],
+    'Graduate or Professional Degree': [
+        'Master’s Degree', 'Professional School Degree', 'Doctorate Degree'
+    ]
+}
 
-    # Age df
-    age_group_mapping = {
-        'Under 5 Years': ['Male Population Under 5 Years', 'Female Population Under 5 Years'],
-        '5 to 9 Years': ['Male Population 5 to 9 Years', 'Female Population 5 to 9 Years'],
-        '10 to 14 Years': ['Male Population 10 to 14 Years', 'Female Population 10 to 14 Years'],
-        '15 to 19 Years': ['Male Population 15 to 17 Years', 'Male Population 18 and 19 Years',
-                        'Female Population 15 to 17 Years', 'Female Population 18 and 19 Years'],
-        '20 to 24 Years': ['Male Population 20 Years', 'Male Population 21 Years', 'Male Population 22 to 24 Years',
-                        'Female Population 20 Years', 'Female Population 21 Years', 'Female Population 22 to 24 Years'],
-        '25 to 34 Years': ['Male Population 25 to 29 Years', 'Male Population 30 to 34 Years',
-                        'Female Population 25 to 29 Years', 'Female Population 30 to 34 Years'],
-        '35 to 44 Years': ['Male Population 35 to 39 Years', 'Male Population 40 to 44 Years',
-                        'Female Population 35 to 39 Years', 'Female Population 40 to 44 Years'],
-        '45 to 54 Years': ['Male Population 45 to 49 Years', 'Male Population 50 to 54 Years',
-                        'Female Population 45 to 49 Years', 'Female Population 50 to 54 Years'],
-        '55 to 59 Years': ['Male Population 55 to 59 Years', 'Female Population 55 to 59 Years'],
-        '60 to 64 Years': ['Male Population 60 and 61 Years', 'Male Population 62 to 64 Years',
-                        'Female Population 60 and 61 Years', 'Female Population 62 to 64 Years'],
-        '65 to 74 Years': ['Male Population 65 and 66 Years', 'Male Population 67 to 69 Years', 'Male Population 70 to 74 Years',
-                        'Female Population 65 and 66 Years', 'Female Population 67 to 69 Years', 'Female Population 70 to 74 Years'],
-        '75 to 84 Years': ['Male Population 75 to 79 Years', 'Male Population 80 to 84 Years',
-                        'Female Population 75 to 79 Years', 'Female Population 80 to 84 Years'],
-        '85 Years and Over': ['Male Population 85 Years and Over', 'Female Population 85 Years and Over']
-    }
-    global age_group_df, edu_group_df, race_columns, occupation_columns, heating_fuel_columns
-    age_group_df = pd.DataFrame()
+RACE_COLUMNS = [
+    'Population White Alone',
+    'Population Black or African American Alone',
+    'Population American Indian and Alaska Native Alone',
+    'Population Asian Alone',
+    'Population Native Hawaiian and Other Pacific Islander Alone',
+    'Population Some Other Race Alone',
+    'Population Two or More Races',
+#     'Population Hispanic or Latino'
+]
+OCCUPATION_COLUMNS = [
+#     'Total Occupations', 
+    'Management, Business, Science, and Arts Occupations', 
+    'Service Occupations', 
+    'Sales and Office Occupations', 
+    'Natural Resources, Construction, and Maintenance Occupations', 
+    'Production, Transportation, and Material Moving Occupations'
+]
+HEATING_FUEL_COLUMNS = [
+#      'Housing Units that use Heating Fuel',
+    'Housing Units with Utility Gas',
+    'Housing Units with Bottle/Tank/LP Gas',
+    'Housing Units with Electricity',
+    'Housing Units with Fuel/Oil/Kerosene',
+    'Housing Units with Coal',
+    'Housing Units with Wood',
+    'Housing Units with Solar Energy',
+    'Housing Units with Other Fuel',
+    'Housing Units with No Fuel Used',
+]
 
-    for group_name, columns in age_group_mapping.items():
-        age_group_df[group_name] = df[columns].sum(axis=1)
+
+def prepare_category_df(df, category_columns):
+    category_df = pd.DataFrame()
+
+    for group_name, columns in category_columns.items():
+        category_df[group_name] = df[columns].sum(axis=1)
         
-    age_group_df = age_group_df.apply(pd.to_numeric, errors='coerce')
-    age_group_df.insert(0, 'ZIP Code', df['ZIP Code'])
-
-
-    # Education df
-    education_grouping = {
-        'Less Than 9th Grade': [
-            'No Schooling Completed', 'Nursery School', 'Kindergarten', '1st Grade', 
-            '2nd Grade', '3rd Grade', '4th Grade'
-        ],
-        '9th to 12th Grade No Diploma': [
-            '5th Grade', '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', 
-            '11th Grade', '12th Grade No Diploma'
-        ],
-        'High School Graduate and Equivalent': [
-            'Regular High School Diploma', 'GED or Alternative Credential'
-        ],
-        'Some College No Degree': [
-            'Some College, Less Than 1 Year', 'Some College, 1 or More Years, No Degree'
-        ],
-        'Associates Degree': [
-            'Associate’s Degree'
-        ],
-        'Bachelors Degree': [
-            'Bachelor’s Degree'
-        ],
-        'Graduate or Professional Degree': [
-            'Master’s Degree', 'Professional School Degree', 'Doctorate Degree'
-        ]
-    }
-    edu_group_df = pd.DataFrame()
-
-    for group_name, columns in education_grouping.items():
-        edu_group_df[group_name] = df[columns].sum(axis=1)
-
-    edu_group_df = edu_group_df.apply(pd.to_numeric, errors='coerce')
-    edu_group_df.insert(0, 'ZIP Code', df['ZIP Code'])
-
-    # Race column names
-    race_columns = [
-        'Population White Alone',
-        'Population Black or African American Alone',
-        'Population American Indian and Alaska Native Alone',
-        'Population Asian Alone',
-        'Population Native Hawaiian and Other Pacific Islander Alone',
-        'Population Some Other Race Alone',
-        'Population Two or More Races',
-    #     'Population Hispanic or Latino'
-    ]
-    occupation_columns = [
-    #     'Total Occupations', 
-        'Management, Business, Science, and Arts Occupations', 
-        'Service Occupations', 
-        'Sales and Office Occupations', 
-        'Natural Resources, Construction, and Maintenance Occupations', 
-        'Production, Transportation, and Material Moving Occupations'
-    ]
-    heating_fuel_columns = [    
-    #      'Housing Units that use Heating Fuel',
-        'Housing Units with Utility Gas',
-        'Housing Units with Bottle/Tank/LP Gas',
-        'Housing Units with Electricity',
-        'Housing Units with Fuel/Oil/Kerosene',
-        'Housing Units with Coal',
-        'Housing Units with Wood',
-        'Housing Units with Solar Energy',
-        'Housing Units with Other Fuel',
-        'Housing Units with No Fuel Used',
-    ]
-
+    category_df = category_df.apply(pd.to_numeric, errors='coerce')
+    category_df.insert(0, 'ZIP Code', df['ZIP Code'])
+    return category_df
 
 
 def analyze_zip_code():
     zip_code = '32805'
     df = get_data(zip_code)
-    prepare_data(df)
+    age_group_df = prepare_category_df(df, AGE_COLUMNS)
+    edu_group_df = prepare_category_df(df, EDUCATION_COLUMNS)
+
     print(f"\033[1m-----------------Analysis for ZIP Code: {zip_code}-------------------\033[0m \n")
     print("\033[1m--------------------Demographic Analysis------------------------\033[0m \n")
     df_zip = df['ZIP Code']
@@ -141,7 +132,7 @@ def analyze_zip_code():
     print(f"\nThe median age is \033[1m{median_age}\033[0m.\n")
 
     # Race
-    race_distribution = df_zip[race_columns].iloc[0]
+    race_distribution = df_zip[RACE_COLUMNS].iloc[0]
     race_distribution.index = [col.replace('Population ', '').replace(' Alone', '') for col in race_distribution.index]
     top_race = race_distribution.idxmax()
     hispanic_latino_percent = (df_zip['Population Hispanic or Latino'].iloc[0] / total_population) * 100
@@ -188,7 +179,7 @@ def analyze_zip_code():
     print(f"Median Income for a worker: \033[1m${median_household_income}\033[0m")
     
         
-    occupation_distribution = df_zip[occupation_columns].iloc[0]
+    occupation_distribution = df_zip[OCCUPATION_COLUMNS].iloc[0]
     total_occupations = df_zip['Total Occupations']
     
     occupation_distribution.plot(kind='pie', 
@@ -274,7 +265,7 @@ def analyze_zip_code():
     plt.tight_layout()
     plt.show()
     
-    sustainability_data = df_zip[heating_fuel_columns].iloc[0].sort_values(ascending=False)
+    sustainability_data = df_zip[HEATING_FUEL_COLUMNS].iloc[0].sort_values(ascending=False)
     sustainability_features = (sustainability_data / df_zip['Housing Units that use Heating Fuel'].iloc[0]) * 100
     sustainability_features.index = [col.replace('Housing Units with ', '') for col in sustainability_features.index]
 
@@ -304,6 +295,3 @@ def analyze_zip_code():
     plt.tight_layout()
     plt.show()
     print(f'Percentage is based on the total occupied households \033[1m{occupied_units}\033[0m.')
-    
-    print("\033[1m------------------------------------------------------------\033[0m \n")
-
