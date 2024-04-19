@@ -9,7 +9,7 @@ import pandas as pd
 
 dotenv.load_dotenv()
 logging.basicConfig(
-    filename='bot.log',
+    filename='log.log',
     encoding='utf-8', 
     level=logging.DEBUG, 
     format='%(asctime)s:%(levelname)s:%(name)s:%(filename)s:line %(lineno)d: %(message)s'
@@ -80,7 +80,7 @@ async def run(zip_code):
         await asyncio.gather(*tasks)
         return results
 
-def get_data(zip_code):
+def fetch_data(zip_code):
     try:
         results = asyncio.run(run(zip_code))
         df = generate_dataframe(zip_code, results)
@@ -90,5 +90,5 @@ def get_data(zip_code):
         logger.exception("Failed to complete the data extraction and DataFrame creation process.")
         raise
 
-if __name__ == '__main__':
-    print(get_data(ZIPCODE))
+# if __name__ == '__main__':
+#     print(fetch_data(ZIPCODE))
