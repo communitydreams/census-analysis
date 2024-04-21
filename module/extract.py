@@ -80,7 +80,7 @@ async def run(zip_code):
         await asyncio.gather(*tasks)
         return results
 
-def fetch_data(zip_code):
+def get_data(zip_code):
     try:
         results = asyncio.run(run(zip_code))
         df = generate_dataframe(zip_code, results)

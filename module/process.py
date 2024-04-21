@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from extract import fetch_data
+from module.extract import get_data
 
 
 sns.set_theme(style="darkgrid", rc={"figure.figsize": (8, 6), "axes.titlesize": 15})
@@ -94,12 +94,11 @@ def prepare_category_df(df, category_columns):
     for group_name, columns in category_columns.items():
         category_df[group_name] = df[columns].sum(axis=1)     
     category_df = category_df.apply(pd.to_numeric, errors='coerce')
-    category_df.insert(0, 'ZIP Code', df['ZIP Code'])
     return category_df
 
 def fetch_and_prepare_data(zip_code):
     """Fetch and prepare all data categories."""
-    df = fetch_data(zip_code)
+    df = get_data(zip_code)
     data = {
         'age_data': prepare_category_df(df, AGE_COLUMNS),
         'education_data': prepare_category_df(df, EDUCATION_COLUMNS),
@@ -117,7 +116,7 @@ def age_sex_analysis(data):
         'total_population': df['Total Population'].iloc[0],
         'sex_ratio': round(df['Sex Ratio Males'].iloc[0] / df['Sex Ratio Females'].iloc[0] * 100, 1),
         'median_age': df['Median Age'].iloc[0],
-        'age_distribution': data['age_data'].drop('ZIP Code', axis=1).astype(int),
+        'age_distribution': data['age_data'].astype(int),
     }
     return demographics
 
@@ -125,7 +124,7 @@ def race_analysis(data):
     """Analyze race distribution and return the results."""
     df = data['master']
     race_data = data['race_data']
-    race_data.index = [col.replace('Population ', '').replace(' Alone', '') for col in race_data.columns]
+    race_data.columns = [col.replace('Population ', '').replace(' Alone', '') for col in race_data.columns]
     top_race = race_data.idxmax(axis=1).iloc[0]
     hispanic_latino_percent = (df['Population Hispanic or Latino'].iloc[0] / df['Total Population'].iloc[0]) * 100
 
@@ -138,8 +137,8 @@ def race_analysis(data):
 
 def educational_analysis(data):
     """Analyze educational levels and return the results."""
-    edu_data = data['education_data'].drop('ZIP Code', axis=1).astype(int).sort_values(by=edu_data.index[0], ascending=False)
-    total_education = data['general_info']['Education Total'].iloc[0]
+    edu_data = data['education_data'].iloc[0].sort_values(ascending=False)
+    total_education = data['master']['Education Total'].iloc[0]
     edu_percentage =edu_data.divide(total_education) * 100
     top_education = edu_percentage.idxmax()
 
@@ -175,8 +174,9 @@ def employment_analysis(data):
 
 def housing_analysis(data):
     """Analyze housing data and return the results."""
-    df = data['general_info']
-    df['Married Households Without Children'] = df['Married-Couple Households'] - df['Married-Couple Households with Children']
+    df = data['master']
+    new_column_data = df['Married-Couple Households'] - df['Married-Couple Households with Children']
+    df = pd.concat([df, new_column_data.rename('Married Households Without Children')], axis=1)
     household_data = {
         'Family Type': ['Married with Children', 'Married w/o Children', 'Single Parent w/ Children', 'Individuals'],
         'Count': [
@@ -200,10 +200,10 @@ def housing_analysis(data):
 
 def sustainability_analysis(data):
     """Analyze sustainability related to heating fuel and return the results."""
-    df = data['general_info']
+    df = data['master']
     sustainability_data = data['heating_fuel_data'].iloc[0].sort_values(ascending=False)
     sustainability_features = (sustainability_data / df['Housing Units that use Heating Fuel'].iloc[0]) * 100
-    sustainability_features.index = [col.replace('Housing Units with ', '') for col in sustainability_features.columns]
+    sustainability_features.index = [col.replace('Housing Units with ', '') for col in sustainability_features.index]
 
     sustainability_table = pd.DataFrame({
         'Energy Source': sustainability_features.index,
@@ -215,7 +215,7 @@ def sustainability_analysis(data):
 
 def technology_analysis(data):
     """Analyze technology usage in households and return the results."""
-    df = data['general_info']
+    df = data['master']
     tech_data = df[['Households with a Smartphone/Tablet/Portable', 'Households with a Computer', 'Households with Internet']]
     total_occupied_units = df['Occupied Housing Units'].iloc[0]
     tech_percentages = (tech_data / total_occupied_units * 100).iloc[0]
