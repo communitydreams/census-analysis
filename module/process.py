@@ -154,7 +154,7 @@ def educational_analysis(data):
 def employment_analysis(data):
     """Calculate employment rate and return the results."""
     df = data['master']
-    occupation_distribution = df['occupation_data']
+    occupation_distribution = data['occupation_data']
     employed_population = df['Employed Population 16 and Over'].iloc[0]
     civilian_labor_force = df['Civilian Labor Force 16 and Over'].iloc[0]
     employment_rate = (employed_population / civilian_labor_force) * 100
@@ -205,44 +205,42 @@ def sustainability_analysis(data):
     sustainability_features = (sustainability_data / df['Housing Units that use Heating Fuel'].iloc[0]) * 100
     sustainability_features.index = [col.replace('Housing Units with ', '') for col in sustainability_features.columns]
 
-    sustainability_info = {
-        'sustainability_data': sustainability_data,
-        'sustainability_percentages': sustainability_features
-    }
-    return sustainability_info
-
-def analyze_zip_code():
-    zip_code = '32805'  
-    
-
-    
-    sustainability_data = df[HEATING_FUEL_COLUMNS].iloc[0].sort_values(ascending=False)
-    sustainability_features = (sustainability_data / df['Housing Units that use Heating Fuel'].iloc[0]) * 100
-    sustainability_features.index = [col.replace('Housing Units with ', '') for col in sustainability_features.index]
-
     sustainability_table = pd.DataFrame({
         'Energy Source': sustainability_features.index,
         'Percentage': sustainability_features.values,
         'Number of Units': sustainability_data.values
     }).sort_values(by='Percentage', ascending=False)
-    
-    sustainability_table['Percentage'] = sustainability_table.apply(
-        lambda row: f"{row['Percentage']:.2f}%", axis=1)
-    sustainability_table.reset_index(drop=True, inplace=True)
-    print(sustainability_table.to_string(index=False))
 
-    # Computer and internet
-    household_tech_data = df[['Households with a Smartphone/Tablet/Portable', 'Households with a Computer', 'Households with Internet']].iloc[0]
-    household_tech_percentages = (household_tech_data / occupied_units) * 100
-    sns.barplot(x=household_tech_data.index, y=household_tech_data.values, palette="viridis")
-    plt.title(f'Technology in Households in ZIP {zip_code}')
-    plt.xlabel('Technology')
-    plt.ylabel('Number of Households')
+    return sustainability_table
 
-    for index, value in enumerate(household_tech_data.values):
-        percentage = household_tech_percentages[index]
-        plt.text(index, value, f'{percentage:.1f}% ({value})', ha='center', va='bottom')
+def technology_analysis(data):
+    """Analyze technology usage in households and return the results."""
+    df = data['general_info']
+    tech_data = df[['Households with a Smartphone/Tablet/Portable', 'Households with a Computer', 'Households with Internet']]
+    total_occupied_units = df['Occupied Housing Units'].iloc[0]
+    tech_percentages = (tech_data / total_occupied_units * 100).iloc[0]
 
-    plt.tight_layout()
-    plt.show()
-    print(f'Percentage is based on the total occupied households \033[1m{occupied_units}\033[0m.')
+    technology = {
+        'technology_data': tech_data,
+        'technology_percentages': tech_percentages
+    }
+    return technology
+
+if __name__ == '__main__':
+    zip_code = '32805'  
+    data = fetch_and_prepare_data(zip_code)
+    demographics = age_sex_analysis(data)
+    race_info = race_analysis(data)
+    education_info = educational_analysis(data)
+    employment_info = employment_analysis(data)
+    housing_info = housing_analysis(data)
+    sustainability_info = sustainability_analysis(data)
+    technology_info = technology_analysis(data)
+
+    print(demographics)
+    print(race_info)
+    print(education_info)
+    print(employment_info)
+    print(housing_info)
+    print(sustainability_info)
+    print(technology_info)
