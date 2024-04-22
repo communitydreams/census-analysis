@@ -1,11 +1,7 @@
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 
 from module.extract import get_data
 
-
-sns.set_theme(style="darkgrid", rc={"figure.figsize": (8, 6), "axes.titlesize": 15})
 
 AGE_COLUMNS = {
     'Under 5 Years': ['Male Population Under 5 Years', 'Female Population Under 5 Years'],
