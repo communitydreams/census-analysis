@@ -2,5 +2,4 @@ streamlit
 python-dotenv
 aiohttp
 pandas
-seaborn
-matplotlib
+plotly

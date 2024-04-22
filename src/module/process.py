@@ -112,11 +112,13 @@ def fetch_and_prepare_data(zip_code):
 def age_sex_analysis(data):
     """Perform demographic analysis and return the results."""
     df = data['master']
+    age_distribution = data['age_data'].astype(int).transpose().reset_index()
+    age_distribution.columns = ['Age_Groups', 'Population']
     demographics = {
         'total_population': df['Total Population'].iloc[0],
         'sex_ratio': round(df['Sex Ratio Males'].iloc[0] / df['Sex Ratio Females'].iloc[0] * 100, 1),
         'median_age': df['Median Age'].iloc[0],
-        'age_distribution': data['age_data'].astype(int),
+        'age_distribution': age_distribution,
     }
     return demographics
 
