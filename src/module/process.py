@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from module.extract import get_data
+from src.module.extract import get_data
 
 
 sns.set_theme(style="darkgrid", rc={"figure.figsize": (8, 6), "axes.titlesize": 15})

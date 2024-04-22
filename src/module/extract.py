@@ -33,7 +33,7 @@ BASE_URL = f"https://api.census.gov/data/{YEAR}/acs/acs5"
 # Get the column names from the JSON file
 def load_column_mapping():
     try:
-        with open('column_names.json', 'r') as f:
+        with open('src/module/column_names.json', 'r') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.error(f"Error loading column names: {e}")
