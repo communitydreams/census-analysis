@@ -2,7 +2,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from src.module.extract import get_data
+from module.extract import get_data
 
 
 sns.set_theme(style="darkgrid", rc={"figure.figsize": (8, 6), "axes.titlesize": 15})
@@ -226,21 +226,21 @@ def technology_analysis(data):
     }
     return technology
 
-if __name__ == '__main__':
-    zip_code = '32805'  
-    data = fetch_and_prepare_data(zip_code)
-    demographics = age_sex_analysis(data)
-    race_info = race_analysis(data)
-    education_info = educational_analysis(data)
-    employment_info = employment_analysis(data)
-    housing_info = housing_analysis(data)
-    sustainability_info = sustainability_analysis(data)
-    technology_info = technology_analysis(data)
+# if __name__ == '__main__':
+#     zip_code = '32805'  
+#     data = fetch_and_prepare_data(zip_code)
+#     demographics = age_sex_analysis(data)
+#     race_info = race_analysis(data)
+#     education_info = educational_analysis(data)
+#     employment_info = employment_analysis(data)
+#     housing_info = housing_analysis(data)
+#     sustainability_info = sustainability_analysis(data)
+#     technology_info = technology_analysis(data)
 
-    print(demographics)
-    print(race_info)
-    print(education_info)
-    print(employment_info)
-    print(housing_info)
-    print(sustainability_info)
-    print(technology_info)
+#     print(demographics)
+#     print(race_info)
+#     print(education_info)
+#     print(employment_info)
+#     print(housing_info)
+#     print(sustainability_info)
+#     print(technology_info)
