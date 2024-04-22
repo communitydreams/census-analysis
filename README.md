@@ -2,6 +2,4 @@
 Analysis from Census API
 
 ### Run
-`python module/extract.py`
-
-`python -m module.extract`
+`streamlit run src/streamlit_app.py`
