@@ -153,7 +153,7 @@ def educational_analysis(data):
 def employment_analysis(data):
     """Calculate employment rate and return the results."""
     df = data['master']
-    occupation_distribution = data['occupation_data']
+    occupation_distribution = data['occupation_data'].melt(var_name='Occupation Category', value_name='Count')
     employed_population = df['Employed Population 16 and Over'].iloc[0]
     civilian_labor_force = df['Civilian Labor Force 16 and Over'].iloc[0]
     employment_rate = (employed_population / civilian_labor_force) * 100
@@ -187,12 +187,13 @@ def housing_analysis(data):
         ]
     }
     household_df = pd.DataFrame(household_data)
+    occupied_distribution = df[['Owner-Occupied Housing Units', 'Renter-Occupied Housing Units']].melt(var_name='Housing Type', value_name='Count')
 
     housing = {
         'total_units': df['Total Housing Units'].iloc[0],
         'occupied_units': df['Occupied Housing Units'].iloc[0],
         'vacant_units': df['Vacant Housing Units'].iloc[0],
-        'occupied_type_distribution': df[['Owner-Occupied Housing Units', 'Renter-Occupied Housing Units']],
+        'occupied_type_distribution': occupied_distribution,
         'median_household_income': df['Median Household Income'].iloc[0],
         'family_household_data': household_df,
     }
@@ -217,14 +218,11 @@ def technology_analysis(data):
     """Analyze technology usage in households and return the results."""
     df = data['master']
     tech_data = df[['Households with a Smartphone/Tablet/Portable', 'Households with a Computer', 'Households with Internet']]
-    total_occupied_units = df['Occupied Housing Units'].iloc[0]
-    tech_percentages = (tech_data / total_occupied_units * 100).iloc[0]
+    tech_data = tech_data.transpose().reset_index()
+    tech_data.columns = ['Technology', 'Count']
+    tech_data['Percentage'] = tech_data['Count'] / df['Occupied Housing Units'].iloc[0] * 100
 
-    technology = {
-        'technology_data': tech_data,
-        'technology_percentages': tech_percentages
-    }
-    return technology
+    return tech_data
 
 # if __name__ == '__main__':
 #     zip_code = '32805'  

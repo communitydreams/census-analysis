@@ -34,6 +34,7 @@ if zip_code:
     st.markdown(f"**Sex Ratio: {demographics['sex_ratio']}%**")
     st.markdown(f"**Median Age: {demographics['median_age']}**")
 
+    # Age Distribution
     fig = px.bar(
         data_frame=demographics['age_distribution'],
         y='Age_Groups',
@@ -43,8 +44,8 @@ if zip_code:
         orientation='h'
     )
     st.plotly_chart(fig)
-    # st.bar_chart(demographics['age_distribution'])
 
+    # Race Distribution
     fig = px.pie(
         race_info['race_distribution'], 
         values='Population', 
@@ -52,7 +53,6 @@ if zip_code:
         title='Population Distribution by Race'
     )
     st.plotly_chart(fig)
-    # st.bar_chart(race_info['race_distribution'])
 
     st.markdown(f"**Top Race: {race_info['top_race']}**")
     st.markdown(f"**Hispanic/Latino Percentage: {race_info['hispanic_latino_percent']}%**")
@@ -61,6 +61,7 @@ if zip_code:
     st.markdown(f"**Poverty Rate (in last 12 months): {employment_info['poverty_rate']}%**")
     st.markdown(f"**Median Workers Income: {employment_info['median_workers_income']}**")
 
+    # Education Distribution
     fig = px.bar(
         data_frame=education_info['education_percentages'],
         title="Education Distribution",
@@ -71,10 +72,13 @@ if zip_code:
     fig.update_layout(legend_title='')
     st.plotly_chart(fig)
 
-    df = employment_info['occupation_distribution'].melt(var_name='Occupation Category', value_name='Count')
-
-    fig = px.treemap(df, path=['Occupation Category'], values='Count',
-                    title='Occupation Distribution')
+    # Occupation Distribution
+    fig = px.treemap(
+        employment_info['occupation_distribution'], 
+        path=['Occupation Category'], 
+        values='Count',
+        title='Occupation Distribution'
+    )
     st.plotly_chart(fig)
 
     st.subheader('Housing')
@@ -82,13 +86,45 @@ if zip_code:
     st.markdown(f"**Occupied/Vacant Housing Units: {housing_info['occupied_units']}/{housing_info['vacant_units']}**")
     st.markdown(f"**Median Household Income: {housing_info['median_household_income']}**")
 
-    print(housing_info['occupied_type_distribution'])
+    # Housing Type Distribution
     fig = px.pie(
         housing_info['occupied_type_distribution'], 
-        values=housing_info['occupied_type_distribution'].iloc[0],
-        names=housing_info['occupied_type_distribution'].index,
-        title='Occupied/Vacant Housing Units Distribution'
+        values='Count', 
+        names='Housing Type', 
+        hole=0.3,
+        title='Occupied Housing Units Distribution'
     )
+    st.plotly_chart(fig)
+
+    # Family Type Distribution
+    fig = px.bar(
+        housing_info['family_household_data'],
+        y='Count',
+        x='Family Type',
+        color='Family Type',
+        title='Family Type Distribution',
+    )
+    st.plotly_chart(fig)
+
+    # Sustainability
+    st.table(sustainability_info)
+
+    # Technology
+    print(technology_info)
+    fig = px.bar(
+        technology_info,
+        x='Technology',
+        y='Count',
+        text='Percentage',  # Add percentages as text on the bars
+        color='Technology',  # Color by technology type
+        title='Technology Usage'
+    )
+
+    # Customize the bar chart
+    fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')  # Format the text with 2 decimal places
+    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')  # Ensure text size is uniform
+    fig.update_layout(xaxis_tickangle=-45)  # Angle the x-axis labels for better readability
+
     st.plotly_chart(fig)
 
 
