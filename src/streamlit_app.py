@@ -5,28 +5,51 @@ import module.process as process
 
 st.set_page_config(page_title="Census Analysis Dashboard", page_icon="📊", layout="wide")
 
-st.title('📊 Census Analysis Dashboard')
-st.markdown("This app presents a comprehensive analysis of US Census data for a selected ZIP Code.")
+st.markdown("<h1 style='text-align: center'>📊 Census Analysis Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("""<p style='text-align: center'>
+                This app presents a comprehensive analysis of US Census data for a selected ZIP Code. 
+                The data is fetched from the US Census API and processed using Python for the latest data available.
+                </p>""", unsafe_allow_html=True)
 
-zip_code = st.text_input("Enter a ZIP Code:", value="32805", max_chars=5)
+formcol1, formcol2, formcol3 = st.columns([1, 3, 1])
+with formcol2:
+    with st.form("options_form", clear_on_submit=False):
+        cols = st.columns(2)  # Adjust the ratios to your liking for better layout
+        with cols[0]:
+            zip_code = st.text_input("**Enter a ZIP Code:**", value="32805", max_chars=5)
+        with cols[1]:
+            theme_selected = st.selectbox("**Select Color Theme:**", ["Plasma", "Viridis", "Peach"])
+        st.form_submit_button(label='Analyze')
 
-if zip_code:
-    with st.spinner(f"Fetching data for ZIP Code {zip_code}..."):
-        try:
-            data = process.fetch_and_prepare_data(zip_code)
-            demographics = process.age_sex_analysis(data)
-            race_info = process.race_analysis(data)
-            education_info = process.educational_analysis(data)
-            employment_info = process.employment_analysis(data)
-            housing_info = process.housing_analysis(data)
-            sustainability_info = process.sustainability_analysis(data)
-            technology_info = process.technology_analysis(data)
-            st.snow()
-        except ValueError as e:
-            st.error(f"Error fetching data: {e}")
+        if theme_selected:
+            color_schemes = {
+                "Plasma": px.colors.sequential.Plasma,
+                "Viridis": px.colors.sequential.Viridis,
+                "Peach": px.colors.sequential.Peach
+            }
+            colorway = color_schemes[theme_selected]
         else:
-            pass
-        
+            colorway = px.colors.sequential.Plasma
+
+    if zip_code:
+        with st.spinner(f"Fetching data for ZIP Code {zip_code}..."):
+            try:
+                data = process.fetch_and_prepare_data(zip_code)
+                demographics = process.age_sex_analysis(data)
+                race_info = process.race_analysis(data)
+                education_info = process.educational_analysis(data)
+                employment_info = process.employment_analysis(data)
+                housing_info = process.housing_analysis(data)
+                sustainability_info = process.sustainability_analysis(data)
+                technology_info = process.technology_analysis(data)
+                st.snow()
+            except ValueError as e:
+                st.error(f"Error fetching data: {e}")
+            else:
+                pass    
+    
+col1, col2, col3 = st.columns([1, 10, 1])
+with col2:    
     st.header(f"**ZIP Code: {zip_code}**")
 
 
@@ -110,22 +133,19 @@ if zip_code:
     st.table(sustainability_info)
 
     # Technology
-    print(technology_info)
     fig = px.bar(
         technology_info,
         x='Technology',
         y='Count',
-        text='Percentage',  # Add percentages as text on the bars
-        color='Technology',  # Color by technology type
+        text='Percentage', 
+        color='Technology',
         title='Technology Usage'
     )
 
     # Customize the bar chart
     fig.update_traces(texttemplate='%{text:.2f}%', textposition='outside')  # Format the text with 2 decimal places
-    fig.update_layout(uniformtext_minsize=8, uniformtext_mode='hide')  # Ensure text size is uniform
-    fig.update_layout(xaxis_tickangle=-45)  # Angle the x-axis labels for better readability
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 
 
