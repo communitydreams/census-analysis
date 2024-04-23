@@ -124,6 +124,8 @@ def race_analysis(data):
     race_data = data['race_data']
     race_data.columns = [col.replace('Population ', '').replace(' Alone', '') for col in race_data.columns]
     top_race = race_data.idxmax(axis=1).iloc[0]
+    race_data = race_data.transpose().reset_index()
+    race_data.columns = ['Race', 'Population']
     hispanic_latino_percent = (df['Population Hispanic or Latino'].iloc[0] / df['Total Population'].iloc[0]) * 100
 
     race_info = {
