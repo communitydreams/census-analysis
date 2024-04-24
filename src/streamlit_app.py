@@ -15,7 +15,7 @@ st.markdown("""<p style='text-align: center'>
 formcol1, formcol2, formcol3 = st.columns([1, 3, 1])
 with formcol2:
     with st.form("options_form", clear_on_submit=False):
-        cols = st.columns(2)  # Adjust the ratios to your liking for better layout
+        cols = st.columns(2)
         with cols[0]:
             zip_code = st.text_input("**Enter a ZIP Code:**", value="32805", max_chars=5)
         with cols[1]:
@@ -106,6 +106,7 @@ with col2:
     )
     fig.update_layout(legend_title='')
     plot4.plotly_chart(fig)
+    st.markdown("---")
 
     kpi9, kpi10, kpi11, kpi12 = st.columns([1, 1, 2, 1])
     kpi9.metric(label="Total Units", value=f"{housing_info['total_units']:,}")
