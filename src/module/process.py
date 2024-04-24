@@ -188,6 +188,7 @@ def housing_analysis(data):
     }
     household_df = pd.DataFrame(household_data)
     occupied_distribution = df[['Owner-Occupied Housing Units', 'Renter-Occupied Housing Units']].melt(var_name='Housing Type', value_name='Count')
+    top_occupied_type = occupied_distribution['Housing Type'].value_counts().idxmax()
 
     housing = {
         'total_units': df['Total Housing Units'].iloc[0],
@@ -196,6 +197,7 @@ def housing_analysis(data):
         'occupied_type_distribution': occupied_distribution,
         'median_household_income': df['Median Household Income'].iloc[0],
         'family_household_data': household_df,
+        'top_occupied_type': top_occupied_type
     }
     return housing
 
