@@ -94,14 +94,15 @@ def prepare_category_df(df, category_columns):
 
 def fetch_and_prepare_data(zip_code):
     """Fetch and prepare all data categories."""
-    df = get_data(zip_code)
+    df, location_string = get_data(zip_code)
     data = {
         'age_data': prepare_category_df(df, AGE_COLUMNS),
         'education_data': prepare_category_df(df, EDUCATION_COLUMNS),
         'race_data': df[RACE_COLUMNS],
         'occupation_data': df[OCCUPATION_COLUMNS],
         'heating_fuel_data': df[HEATING_FUEL_COLUMNS],
-        'master': df
+        'master': df,
+        'location_string': location_string
     }
     return data
 

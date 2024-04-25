@@ -2,6 +2,7 @@ import asyncio
 import os
 import json
 import logging
+import requests
 
 import dotenv
 import aiohttp
@@ -17,11 +18,11 @@ logging.basicConfig(
 logger = logging.getLogger()
 
 # For local ssl certification issue
-import ssl
+# import ssl
 
-ssl_context=ssl.create_default_context()
-ssl_context.check_hostname=False
-ssl_context.verify_mode=ssl.CERT_NONE
+# ssl_context=ssl.create_default_context()
+# ssl_context.check_hostname=False
+# ssl_context.verify_mode=ssl.CERT_NONE
 
 
 CENSUS_DATA_API = os.environ['CENSUS_DATA_API']
@@ -40,12 +41,19 @@ def load_column_mapping():
         raise
 
 # Fetch data asynchronously
-async def fetch_data(session, variable, zip_code, results, reverse_mapping):
+async def fetch_data(session, variable, zip_code, census_tract, results, reverse_mapping):
     params = {
         'get': variable, 
-        'for': f'zip code tabulation area:{zip_code}', 
         'key': CENSUS_DATA_API
     }
+    if zip_code:
+        params['for'] = f'zip code tabulation area:{zip_code}'
+    elif census_tract:
+        params['for'] = f'tract:{census_tract}'
+    else:
+        logger.warning("No ZIP code or census tract provided.")
+        return
+    
     try:
         async with session.get(BASE_URL, params=params) as response:
             if response.status == 200:
@@ -69,23 +77,42 @@ def generate_dataframe(zip_code, results):
     return df
 
 # Main asynchronous run function
-async def run(zip_code):
+async def run(zip_code=None, census_tract=None):
     column_name_mapping = load_column_mapping()
     variables = list(column_name_mapping.values())
     reverse_mapping = {v: k for k, v in column_name_mapping.items()}
     results = {}
     
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_context)) as session:
-        tasks = [fetch_data(session, var, zip_code, results, reverse_mapping) for var in variables]
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector()) as session: # ssl=ssl_context
+        tasks = [fetch_data(session, var, zip_code, census_tract, results, reverse_mapping) for var in variables]
         await asyncio.gather(*tasks)
         return results
+
+def get_location_from_zipcode(zipcode):
+    base_url = f"https://api.zippopotam.us/us/{zipcode}"
+    response = requests.get(base_url)
+
+    if response.status_code == 200:
+        data = response.json()
+        if data["places"]:
+            place = data["places"][0]
+            place_name = place["place name"]
+            state = place["state"]
+            return f"{place_name}, {state} {zipcode}"
+        else:
+            logger.warning(f"No location found for the given zip code: {zipcode}")
+    else:
+        logger.warning(f"Error: {response.status_code} - {response.text}")
+
+    return None
 
 def get_data(zip_code):
     try:
         results = asyncio.run(run(zip_code))
         df = generate_dataframe(zip_code, results)
+        location_string = get_location_from_zipcode(zip_code)
         logger.info("Data extraction and DataFrame creation completed successfully.")
-        return df
+        return df, location_string
     except Exception as e:
         logger.exception("Failed to complete the data extraction and DataFrame creation process.")
         raise
