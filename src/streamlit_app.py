@@ -140,7 +140,19 @@ with col2:
 
     plot7, plot8 = st.columns([1, 1])
     # Sustainability
-    plot7.dataframe(sustainability_info)
+    plot7.dataframe(
+        sustainability_info,
+        hide_index=True,
+        width=None,
+        column_config={
+            "Energy Source": st.column_config.TextColumn("Energy Source"),
+            "Number of Units": st.column_config.ProgressColumn(
+                "Number of Units",
+                format="%f",
+                min_value=0, 
+                max_value=max(sustainability_info['Number of Units'])
+            )}                   
+    )
     # Technology
     fig = px.bar(
         technology_info,

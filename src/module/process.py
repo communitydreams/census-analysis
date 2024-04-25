@@ -208,22 +208,16 @@ def housing_analysis(data):
 def sustainability_analysis(data):
     """Analyze sustainability related to heating fuel and return the results."""
     df = data['master']
-    sustainability_data = data['heating_fuel_data'].iloc[0].sort_values(ascending=False)
-    sustainability_features = (sustainability_data / df['Housing Units that use Heating Fuel'].iloc[0]) * 100
-    sustainability_features.index = [col.replace('Housing Units with ', '') for col in sustainability_features.index]
-
-    sustainability_table = pd.DataFrame({
-        'Energy Source': sustainability_features.index,
-        'Percentage': sustainability_features.values,
-        'Number of Units': sustainability_data.values
-    }).sort_values(by='Percentage', ascending=False)
-
-    return sustainability_table
+    sustainability_data = data['heating_fuel_data']
+    sustainability_data.columns = [col.replace('Housing Units with ', '') for col in sustainability_data.columns]
+    sustainability_table = sustainability_data.melt(var_name='Energy Source', value_name='Number of Units')
+    return sustainability_table.sort_values(by='Number of Units', ascending=False)
 
 def technology_analysis(data):
     """Analyze technology usage in households and return the results."""
     df = data['master']
     tech_data = df[['Households with a Smartphone/Tablet/Portable', 'Households with a Computer', 'Households with Internet']]
+    tech_data.columns = [col.replace('Households with a ', '') for col in tech_data.columns]
     tech_data = tech_data.transpose().reset_index()
     tech_data.columns = ['Technology', 'Count']
     tech_data['Percentage'] = tech_data['Count'] / df['Occupied Housing Units'].iloc[0] * 100
