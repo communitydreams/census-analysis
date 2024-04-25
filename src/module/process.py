@@ -92,9 +92,12 @@ def prepare_category_df(df, category_columns):
     category_df = category_df.apply(pd.to_numeric, errors='coerce')
     return category_df
 
-def fetch_and_prepare_data(zip_code):
+def fetch_and_prepare_data(location_value, census_tract=False):
     """Fetch and prepare all data categories."""
-    df, location_string = get_data(zip_code)
+    if census_tract:
+        df, location_string = get_data(census_tract=location_value)
+    else:
+        df, location_string = get_data(zip_code=location_value)
     data = {
         'age_data': prepare_category_df(df, AGE_COLUMNS),
         'education_data': prepare_category_df(df, EDUCATION_COLUMNS),

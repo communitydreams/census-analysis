@@ -16,8 +16,12 @@ formcol1, formcol2, formcol3 = st.columns([1, 3, 1])
 with formcol2:
     with st.form("options_form", clear_on_submit=False):
         cols = st.columns(2)
+        location_type = "ZIP Code" #st.radio("Select Location Type", ["ZIP Code", "Census Tract"])
         with cols[0]:
-            zip_code = st.text_input("**Enter a ZIP Code:**", value="32805", max_chars=5)
+            if location_type == "ZIP Code":
+                location_value = st.text_input("**Enter a ZIP Code:**", value="32805", max_chars=5)
+            else:
+                location_value = st.text_input("**Enter a Census Tract:**", value="060370101.00")
         with cols[1]:
             template = st.selectbox("**Select Color Template:**", list(pio.templates.keys()), index=5)
         st.form_submit_button(label='Analyze')
@@ -27,10 +31,10 @@ with formcol2:
     else:
         pio.templates.default = 'plotly_dark'
 
-    if zip_code:
-        with st.spinner(f"Fetching data for ZIP Code {zip_code}..."):
+    if location_value:
+        with st.spinner(f"Fetching data for {location_type} {location_value}..."):
             try:
-                data = process.fetch_and_prepare_data(zip_code)
+                data = process.fetch_and_prepare_data(location_value)
                 demographics = process.age_sex_analysis(data)
                 race_info = process.race_analysis(data)
                 education_info = process.educational_analysis(data)
@@ -38,12 +42,12 @@ with formcol2:
                 housing_info = process.housing_analysis(data)
                 sustainability_info = process.sustainability_analysis(data)
                 technology_info = process.technology_analysis(data)
-                st.toast(f"✅ Sucessfully fetched data for ZIP Code {zip_code}.'")
+                st.toast(f"✅ Sucessfully fetched data for {location_type} {location_value}...'")
                 
             except ValueError as e:
                 st.error(f"Error fetching data: {e}")
             else:
-                st.success(f"✅ Sucessfully fetched data for ZIP Code {zip_code}.")
+                st.success(f"✅ Sucessfully fetched data for {location_type} {location_value}...")
                 st.snow()
                 pass    
     

@@ -106,13 +106,16 @@ def get_location_from_zipcode(zipcode):
 
     return None
 
-def get_data(zip_code):
+def get_data(zip_code=None, census_tract=None):
     try:
-        results = asyncio.run(run(zip_code))
-        df = generate_dataframe(zip_code, results)
-        location_string = get_location_from_zipcode(zip_code)
+        results = asyncio.run(run(zip_code or census_tract))
+        df = generate_dataframe(zip_code or census_tract, results)
+        if zip_code:
+            location_info = get_location_from_zipcode(zip_code)
+        else:
+            location_info = census_tract
         logger.info("Data extraction and DataFrame creation completed successfully.")
-        return df, location_string
+        return df, location_info
     except Exception as e:
         logger.exception("Failed to complete the data extraction and DataFrame creation process.")
         raise
