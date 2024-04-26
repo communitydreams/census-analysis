@@ -49,10 +49,19 @@ async def fetch_data(session, variable, zip_code, census_tract, results, reverse
     if zip_code:
         params['for'] = f'zip code tabulation area:{zip_code}'
     elif census_tract:
-        params['for'] = f'tract:{census_tract}'
+        if len(census_tract) in [10, 11]:
+            tract_number = census_tract[-6:]
+            county_code = census_tract[-9:-6]
+            state_code = census_tract[:-9]
+
+            params['for'] = f'tract:{tract_number}'
+            params['in'] = f'state:{state_code} county:{county_code}'
+        else:
+            logger.warning("Invalid census tract provided.")
+            raise Exception("Invalid census tract provided.")
     else:
-        logger.warning("No ZIP code or census tract provided.")
-        return
+        logger.warning("Invalid ZIP code or census tract provided.")
+        raise Exception("Invalid ZIP code or census tract provided.")
     
     try:
         async with session.get(BASE_URL, params=params) as response:
