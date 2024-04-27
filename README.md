@@ -1,16 +1,18 @@
-# Census Analysis Dashboard
+# US Census Analysis Dashboard
 
 The Census Analysis Dashboard is an interactive web application built with Streamlit, designed to provide a comprehensive analysis of US Census data for a selected ZIP code. This tool fetches data from the US Census API and processes it using Python to present the latest available demographic information.
 
+You can try it our at [https://uscensus.streamlit.app/](https://uscensus.streamlit.app/)
+
 ## Features
 
-- Interactive ZIP code input to fetch specific census data.
+- Interactive ZIP code or Census Tract input to fetch specific census data.
 - Visual representations of demographic data such as population age distribution, race distribution, and housing occupancy types.
 - Technology and sustainability analyses through various Plotly chart visualizations.
 - Customizable color themes for personalized dashboard experience.
 - Open-source codebase for community-driven enhancements.
 
-## Installation
+## Install Locally
 
 To set up the Census Analysis Dashboard locally, you'll need Python installed on your system. Then, follow these steps:
 
@@ -40,6 +42,8 @@ The dashboard will be served locally and can be accessed via a web browser.
 ## Contribution
 
 We welcome contributions to the Census Analysis Dashboard. If you're interested in improving or adding new features, feel free to fork the repository, make your changes, and submit a pull request.
+
+> Feel free to request new features, improvements or report bugs by creating an issue on the GitHub repository.
 
 ## License
 
