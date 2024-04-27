@@ -1,18 +1,17 @@
-# US Census Analysis Dashboard
+# 📊 US Census Analysis Dashboard
 
 The Census Analysis Dashboard is an interactive web application built with Streamlit, designed to provide a comprehensive analysis of US Census data for a selected ZIP code. This tool fetches data from the US Census API and processes it using Python to present the latest available demographic information.
 
-Try it out at [https://uscensus.streamlit.app/](https://uscensus.streamlit.app/)
+👉 Try it out at [https://uscensus.streamlit.app/](https://uscensus.streamlit.app/)
 
-## Features
+## 🌟 Features
 
-- Interactive ZIP code or Census Tract input to fetch specific census data.
-- Visual representations of demographic data such as population age distribution, race distribution, and housing occupancy types.
-- Technology and sustainability analyses through various Plotly chart visualizations.
-- Customizable color themes for personalized dashboard experience.
-- Open-source codebase for community-driven enhancements.
+- 🔍 Interactive ZIP code or Census Tract search to fetch specific census data.
+- 📊 Visual representations of demographic data such as population age distribution, race distribution, and housing occupancy type through various Plotly chart visualizations.
+- 🎨 Customizable color themes for personalized dashboard experience.
+- 💾 Open-source codebase for community-driven enhancements.
 
-## Install Locally
+## 🛠️ Install Locally
 
 To set up the Census Analysis Dashboard locally, you'll need Python installed on your system. Then, follow these steps:
 
@@ -39,11 +38,11 @@ streamlit run src/streamlit_app.py
 
 The dashboard will be served locally and can be accessed via a web browser.
 
-## Contribution
+## 🤝 Contribution
 
-We welcome contributions to the Census Analysis Dashboard. If you're interested in improving or adding new features, feel free to fork the repository, make your changes, and submit a pull request.
+Got ideas? Want to make a difference? 🌟 Fork it, tweak it, push it. Transform this project into something even more awesome! Check out the dev branch for some dev drafts.
 
-> Feel free to request new features, improvements or report bugs by creating an issue on the GitHub repository.
+> 🐛 **Spot a bug?** Have a feature in mind? Open an issue [here](https://github.com/communitydreams/census-analysis/issues)!
 
 ## License
 
