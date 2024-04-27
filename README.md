@@ -2,7 +2,7 @@
 
 The Census Analysis Dashboard is an interactive web application built with Streamlit, designed to provide a comprehensive analysis of US Census data for a selected ZIP code. This tool fetches data from the US Census API and processes it using Python to present the latest available demographic information.
 
-You can try it our at [https://uscensus.streamlit.app/](https://uscensus.streamlit.app/)
+Try it out at [https://uscensus.streamlit.app/](https://uscensus.streamlit.app/)
 
 ## Features
 
