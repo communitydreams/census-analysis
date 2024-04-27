@@ -24,9 +24,9 @@ BASE_URL = f"https://api.census.gov/data/{YEAR}/acs/acs5"
 
 
 # Get the column names from the JSON file
-def load_column_mapping():
+def load_json(location):
     try:
-        with open('src/module/data/column_names.json', 'r') as f:
+        with open(location, 'r') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.error(f"Error loading column names: {e}")
@@ -81,7 +81,7 @@ def generate_dataframe( results):
 
 # Main asynchronous run function
 async def run(zip_code=None, census_tract=None):
-    column_name_mapping = load_column_mapping()
+    column_name_mapping = load_json('src/module/data/column_names.json')
     variables = list(column_name_mapping.values())
     reverse_mapping = {v: k for k, v in column_name_mapping.items()}
     results = {}
@@ -91,35 +91,46 @@ async def run(zip_code=None, census_tract=None):
         await asyncio.gather(*tasks)
         return results
 
-def get_location_from_zipcode(zipcode):
-    base_url = f"https://api.zippopotam.us/us/{zipcode}"
-    response = requests.get(base_url)
+def get_location(zip_code=None, census_tract=None):
+    if zip_code:
+        base_url = f"https://api.zippopotam.us/us/{zip_code}"
+        response = requests.get(base_url)
 
-    if response.status_code == 200:
-        data = response.json()
-        if data["places"]:
-            place = data["places"][0]
-            place_name = place["place name"]
-            state = place["state"]
-            return f"{place_name}, {state} {zipcode}"
+        if response.status_code == 200:
+            data = response.json()
+            if data["places"]:
+                place = data["places"][0]
+                place_name = place["place name"]
+                state = place["state"]
+                return f"{place_name}, {state} {zip_code}"
+            else:
+                logger.warning(f"No location found for the given zip code: {zip_code}")
         else:
-            logger.warning(f"No location found for the given zip code: {zipcode}")
-    else:
-        logger.warning(f"Error: {response.status_code} - {response.text}")
+            errormessage = f"Error: {response.status_code} - {response.text}"
+            logger.warning(errormessage)
+            raise Exception(errormessage)
+    elif census_tract:
+        area_info = load_json('src/module/data/geocodes_names.json')
+        if census_tract[:5] in area_info:
+                area_name = area_info[census_tract[:5]]
+                return f"{area_name} {census_tract}"
+        else:
+            logger.warning(f"No location found for the given census tract: {census_tract}")
+            return census_tract
 
-    return None
 
 def get_data(zip_code=None, census_tract=None):
     try:
         if census_tract:
             census_tract = census_tract.zfill(11)
             results = asyncio.run(run(census_tract=census_tract))
-            location_info = census_tract
+            location_info = get_location(census_tract=census_tract)
         elif zip_code:
             results = asyncio.run(run(zip_code=zip_code))
-            location_info = get_location_from_zipcode(zip_code)
+            location_info = get_location(zip_code=zip_code)
         else:
             raise Exception("Invalid ZIP code or census tract provided.")
+        
         df = generate_dataframe(results)
         logger.info("Data extraction and DataFrame creation completed successfully.")
         return df, location_info

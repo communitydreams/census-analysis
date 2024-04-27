@@ -65,7 +65,7 @@ if data:
     st.markdown("---")
     col1, col2, col3 = st.columns([1, 10, 1])
     with col2:    
-        st.markdown(f"<h2 style='text-align: center'>Demopraphic Analysis for {data['location_string']}</h2> <br>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style='text-align: center'>{data['location_string']}</h2> <br><br>", unsafe_allow_html=True)
 
         kpi1, kpi2, kpi3, kpi4 = st.columns([1, 1, 2, 0.5])
         kpi1.metric(label="Total Population", value=f"{demographics['total_population']:,}")
