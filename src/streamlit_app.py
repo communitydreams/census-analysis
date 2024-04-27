@@ -30,7 +30,7 @@ with formcol2:
             if location_type == "ZIP Code":
                 location_value = st.text_input("Enter a ZIP Code:", value="32805", max_chars=5)
             else:
-                location_value = st.text_input("Enter a Census Tract:", value="")
+                location_value = st.text_input("Enter a Census Tract:", value="1089002501", max_chars=11)
 
         with cols[1]:
             template = st.selectbox("**Select Color Template:**", list(pio.templates.keys()), index=5)
