@@ -27,7 +27,6 @@ with formcol2:
     with st.form("options_form", clear_on_submit=False):
         cols = st.columns(2)
         with cols[0]:
-            # location_value = st.text_input("**Enter a ZIP Code:**", value="32805", max_chars=5)
             if location_type == "ZIP Code":
                 location_value = st.text_input("Enter a ZIP Code:", value="32805", max_chars=5)
             else:
@@ -58,11 +57,9 @@ with formcol2:
                     sustainability_info = process.sustainability_analysis(data)
                     technology_info = process.technology_analysis(data)
                     st.toast(f"✅ Fetched data for {location_type} {location_value}...")
-                except ValueError as e:
-                    st.error(f"Error fetching data: {e}")
-                else:
                     st.success(f"✅ Sucessfully fetched data for {location_type} {location_value}...")
-                    pass    
+                except Exception as e:
+                    st.error(f"Error fetching data: {e}")
 
 if data:
     st.markdown("---")

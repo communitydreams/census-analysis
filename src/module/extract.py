@@ -63,6 +63,7 @@ async def fetch_data(session, variable, zip_code, census_tract, results, reverse
             else:
                 results[reverse_mapping[variable]] = f'Status code: {response.status}'
                 logger.warning(f"Unexpected status code: {response.status} for variable: {variable}")
+                raise Exception(f"Unexpected status code: {response.status} for variable: {variable}")
     except asyncio.TimeoutError:
         results[reverse_mapping[variable]] = 'Timeout'
         logger.warning(f"Timeout occurred for variable: {variable}")
@@ -74,6 +75,8 @@ async def fetch_data(session, variable, zip_code, census_tract, results, reverse
 def generate_dataframe( results):
     df = pd.DataFrame.from_dict(results, orient='index').transpose()
     df = df.apply(pd.to_numeric, errors='coerce')
+    if pd.isnull(df.loc[0, 'Total Population']):
+        raise ValueError("Invalid input: Total population is null.\n > Incorrect ZIP code or census tract provided.")
     return df
 
 # Main asynchronous run function

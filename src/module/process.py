@@ -94,20 +94,23 @@ def prepare_category_df(df, category_columns):
 
 def fetch_and_prepare_data(location_value, census_tract=False):
     """Fetch and prepare all data categories."""
-    if census_tract:
-        df, location_string = get_data(census_tract=location_value)
-    else:
-        df, location_string = get_data(zip_code=location_value)
-    data = {
-        'age_data': prepare_category_df(df, AGE_COLUMNS),
-        'education_data': prepare_category_df(df, EDUCATION_COLUMNS),
-        'race_data': df[RACE_COLUMNS],
-        'occupation_data': df[OCCUPATION_COLUMNS],
-        'heating_fuel_data': df[HEATING_FUEL_COLUMNS],
-        'master': df,
-        'location_string': location_string
-    }
-    return data
+    try:
+        if census_tract:
+            df, location_string = get_data(census_tract=location_value)
+        else:
+            df, location_string = get_data(zip_code=location_value)
+        data = {
+            'age_data': prepare_category_df(df, AGE_COLUMNS),
+            'education_data': prepare_category_df(df, EDUCATION_COLUMNS),
+            'race_data': df[RACE_COLUMNS],
+            'occupation_data': df[OCCUPATION_COLUMNS],
+            'heating_fuel_data': df[HEATING_FUEL_COLUMNS],
+            'master': df,
+            'location_string': location_string
+        }
+        return data
+    except Exception as e:
+        raise e
 
 def age_sex_analysis(data):
     """Perform demographic analysis and return the results."""
