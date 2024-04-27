@@ -62,7 +62,6 @@ with formcol2:
                     st.error(f"Error fetching data: {e}")
                 else:
                     st.success(f"✅ Sucessfully fetched data for {location_type} {location_value}...")
-                    st.snow()
                     pass    
 
 if data:
@@ -181,6 +180,7 @@ if data:
         plot8.plotly_chart(fig, use_container_width=True)
 
     st.toast(f"✅ Created visuals for {location_type} {location_value}...")
+    st.snow()
     st.markdown("---")
 
 

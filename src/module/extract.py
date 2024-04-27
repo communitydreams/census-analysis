@@ -17,24 +17,16 @@ logging.basicConfig(
 )
 logger = logging.getLogger()
 
-# For local ssl certification issue
-# import ssl
-
-# ssl_context=ssl.create_default_context()
-# ssl_context.check_hostname=False
-# ssl_context.verify_mode=ssl.CERT_NONE
-
-
 CENSUS_DATA_API = os.environ['CENSUS_DATA_API']
 YEAR = '2022'
-ZIPCODE = '32805'
+# ZIPCODE = '32805'
 BASE_URL = f"https://api.census.gov/data/{YEAR}/acs/acs5"
 
 
 # Get the column names from the JSON file
 def load_column_mapping():
     try:
-        with open('src/module/column_names.json', 'r') as f:
+        with open('src/module/data/column_names.json', 'r') as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.error(f"Error loading column names: {e}")
@@ -49,10 +41,10 @@ async def fetch_data(session, variable, zip_code, census_tract, results, reverse
     if zip_code:
         params['for'] = f'zip code tabulation area:{zip_code}'
     elif census_tract:
-        if len(census_tract) in [10, 11]:
-            tract_number = census_tract[-6:]
-            county_code = census_tract[-9:-6]
-            state_code = census_tract[:-9]
+        if len(census_tract) in [11]:
+            state_code = census_tract[:2]
+            county_code = census_tract[2:5] 
+            tract_number = census_tract[5:]
 
             params['for'] = f'tract:{tract_number}'
             params['in'] = f'state:{state_code} county:{county_code}'
@@ -79,10 +71,9 @@ async def fetch_data(session, variable, zip_code, census_tract, results, reverse
         logger.exception("Error fetching data for variable: {variable}")
 
 # Generate DataFrame from results
-def generate_dataframe(zip_code, results):
+def generate_dataframe( results):
     df = pd.DataFrame.from_dict(results, orient='index').transpose()
-    df.insert(0, 'ZIP Code', zip_code)
-    df[df.columns[1:]] = df[df.columns[1:]].apply(pd.to_numeric, errors='coerce')
+    df = df.apply(pd.to_numeric, errors='coerce')
     return df
 
 # Main asynchronous run function
@@ -92,7 +83,7 @@ async def run(zip_code=None, census_tract=None):
     reverse_mapping = {v: k for k, v in column_name_mapping.items()}
     results = {}
     
-    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector()) as session: # ssl=ssl_context
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector()) as session:
         tasks = [fetch_data(session, var, zip_code, census_tract, results, reverse_mapping) for var in variables]
         await asyncio.gather(*tasks)
         return results
@@ -117,16 +108,20 @@ def get_location_from_zipcode(zipcode):
 
 def get_data(zip_code=None, census_tract=None):
     try:
-        results = asyncio.run(run(zip_code or census_tract))
-        df = generate_dataframe(zip_code or census_tract, results)
-        if zip_code:
+        if census_tract:
+            census_tract = census_tract.zfill(11)
+            results = asyncio.run(run(census_tract=census_tract))
+            location_info = census_tract
+        elif zip_code:
+            results = asyncio.run(run(zip_code=zip_code))
             location_info = get_location_from_zipcode(zip_code)
         else:
-            location_info = census_tract
+            raise Exception("Invalid ZIP code or census tract provided.")
+        df = generate_dataframe(results)
         logger.info("Data extraction and DataFrame creation completed successfully.")
         return df, location_info
     except Exception as e:
-        logger.exception("Failed to complete the data extraction and DataFrame creation process.")
+        logger.exception(f"Failed to complete the data extraction and DataFrame creation process.\n {e}")
         raise
 
 # if __name__ == '__main__':
