@@ -69,7 +69,7 @@ if data:
 
         kpi1, kpi2, kpi3, kpi4 = st.columns([1, 1, 2, 0.5])
         kpi1.metric(label="Total Population", value=f"{demographics['total_population']:,}")
-        kpi2.metric(label="Sex Ratio", value=f"{demographics['sex_ratio']}%", delta="Males per 100 Females", delta_color="off")
+        kpi2.metric(label="Sex Ratio", value=f"{demographics['sex_ratio']}", delta="Males per 100 Females", delta_color="off")
         kpi3.metric(label="Top Race", value=race_info['top_race'])
         kpi4.metric(label="Median Age", value=demographics['median_age'])
 
