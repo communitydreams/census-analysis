@@ -18,7 +18,7 @@ data = None
 st.markdown("<h1 style='text-align: center'>📊 U.S Census Analysis</h1>", unsafe_allow_html=True)
 st.markdown("""<p style='text-align: center'>
                 This app presents a comprehensive analysis of US Census data for a selected ZIP Code. <br>
-                The data is fetched from the [US Census API](https://www.census.gov/data/developers/data-sets/acs-5year.html) for the latest data available and processed using Python.
+                The data is fetched from the <a href="https://www.census.gov/data/developers/data-sets/acs-5year.html" target="_blank">US Census API</a> for the latest data available and processed using Python.
                 It creates a dashboard that provides a visual representation of demographic data such as population age distribution, education, employment, and housing occupancy type.
                 </p>
                 <p style='text-align: center'>
