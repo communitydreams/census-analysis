@@ -18,8 +18,16 @@ data = None
 st.markdown("<h1 style='text-align: center'>📊 U.S Census Analysis</h1>", unsafe_allow_html=True)
 st.markdown("""<p style='text-align: center'>
                 This app presents a comprehensive analysis of US Census data for a selected ZIP Code. 
-                The data is fetched from the US Census API and processed using Python for the latest data available.
-                </p>""", unsafe_allow_html=True)
+                The data is fetched from the US Census API for the latest data available and processed using Python.
+                It creates a dashboard that provides a visual representation of demographic data such as population age distribution, education, employment, and housing occupancy type.
+                </p>
+                <br>
+                <p style='text-align: center'>
+                Check out theGitHub Repository below to learn more about the project, request for more features, report issues, or contribute to the project.
+                <a href="https://github.com/communitydreams/census-analysis" target="_blank">
+                    <img src="https://img.shields.io/badge/GitHub-View%20Repo-blue?style=for-the-badge&logo=github" alt="GitHub Repository">
+            
+            """, unsafe_allow_html=True)
 
 formcol1, formcol2, formcol3 = st.columns([1, 3, 1])
 with formcol2:
