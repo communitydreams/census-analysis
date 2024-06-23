@@ -21,11 +21,11 @@ st.markdown("""<p style='text-align: center'>
                 The data is fetched from the US Census API for the latest data available and processed using Python.
                 It creates a dashboard that provides a visual representation of demographic data such as population age distribution, education, employment, and housing occupancy type.
                 </p>
-                <br>
                 <p style='text-align: center'>
                 Check out theGitHub Repository below to learn more about the project, request for more features, report issues, or contribute to the project.
+                <br><br>
                 <a href="https://github.com/communitydreams/census-analysis" target="_blank">
-                    <img src="https://img.shields.io/badge/GitHub-View%20Repo-blue?style=for-the-badge&logo=github" alt="GitHub Repository">
+                    <img src="https://img.shields.io/badge/GitHub-View%20Repo-red?style=for-the-badge&logo=github" alt="GitHub Repository">
             
             """, unsafe_allow_html=True)
 
